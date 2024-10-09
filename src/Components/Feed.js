@@ -1,71 +1,55 @@
-import React, { useState, useRef } from 'react';
-import { GoogleMap, LoadScript, Autocomplete } from '@react-google-maps/api';
+import React, { useState } from 'react';
+import { LoadScript } from '@react-google-maps/api';
+import Map from './Map';
+import SearchBar from './SearchBar';
 import styled from 'styled-components';
 
-const containerStyle = {
-  width: 'calc(100% - 320px)', // Adjust width to accommodate search bar
-  height: '100vh'
-};
-
-const center = {
-  lat: 0, // Center at the equator
-  lng: 0 // Center at the prime meridian
-};
+// Styled button component
+const RequestButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10vw;
+  background-color: #050B38; // Same color as the background
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  height: 40px;
+  border: 1px solid white; // White border
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 2; // Ensure it appears above other elements
+`;
 
 const Feed = () => {
   const [map, setMap] = useState(null);
-  const autocompleteRef = useRef(null);
 
   const onLoad = mapInstance => {
     setMap(mapInstance);
-    mapInstance.setTilt(0); // No tilt for a flat view
+    mapInstance.setTilt(0);
   };
 
   const onUnmount = () => {
     setMap(null);
   };
 
-  const onPlaceChanged = () => {
-    const place = autocompleteRef.current.getPlace();
+  const onPlaceChanged = (place) => {
     if (place.geometry) {
       const location = place.geometry.location;
       map.panTo({ lat: location.lat(), lng: location.lng() });
-      map.setZoom(15); // Zoom in to the location
+      map.setZoom(15);
     }
   };
 
   return (
-    <LoadScript googleMapsApiKey="YOUR_API_KEY_HERE" libraries={['places']}>
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-        <div style={{ marginRight: '10px' }}>
-          <Autocomplete
-            onLoad={ref => (autocompleteRef.current = ref)}
-            onPlaceChanged={onPlaceChanged}
-          >
-            <StyledInput
-              type="text"
-              placeholder="Search for a location"
-            />
-          </Autocomplete>
+    <LoadScript googleMapsApiKey="AIzaSyCZQ_hWQ4iFAHd9EI929TqJTevBgeoSEIs" libraries={['places']}>
+      <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+        <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1 }}>
+          <SearchBar onPlaceChanged={onPlaceChanged} />
         </div>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={2} // Start zoomed out
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-          mapTypeId="satellite" // Use satellite view
-          options={{
-            zoomControl: true,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: true,
-            rotateControl: false,
-            gestureHandling: 'auto'
-          }}
-        >
-          {/* Additional components can be added here if needed */}
-        </GoogleMap>
+        <RequestButton>+ REQUEST A NODE</RequestButton>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <Map onLoad={onLoad} onUnmount={onUnmount} />
+        </div>
       </div>
     </LoadScript>
   );

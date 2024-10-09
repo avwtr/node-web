@@ -11,8 +11,12 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
   }
 
-  body {
+  html, body {
     margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100vw;
+    height: 100vh;
     font-family: 'JetBrains Mono', monospace;
     background-color: #050B38;
     color: white;
@@ -96,7 +100,7 @@ const Username = styled.div`
 
 const WhiteSpace = styled.div`
   width: 100%;
-  height: 60px;
+  height: 8vh;
   background-color: white;
   display: flex;
   align-items: center;
